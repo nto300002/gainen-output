@@ -1,6 +1,11 @@
 import type { PostWithRelations, Category, Tag } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+// サーバー側（Server Component）: Workers を直接呼ぶ
+// クライアント側（"use client"）: "" = relative URL → Next.js rewrites でプロキシ
+const BASE_URL =
+  typeof window === "undefined"
+    ? (process.env.API_URL ?? "http://localhost:8787")
+    : "";
 
 async function fetcher<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, init);

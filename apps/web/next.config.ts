@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
+const API_URL = process.env.API_URL ?? "http://localhost:8787";
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        // ブラウザからの /api/* リクエストを Workers にプロキシ
+        source: "/api/:path*",
+        destination: `${API_URL}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
