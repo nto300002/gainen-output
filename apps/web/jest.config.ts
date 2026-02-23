@@ -16,6 +16,7 @@ const userConfig: Config = {
     "^next/image$": "<rootDir>/src/__tests__/mocks/next-image.tsx",
     "^next/navigation$": "<rootDir>/src/__tests__/mocks/next-navigation.ts",
     "^react-markdown$": "<rootDir>/src/__tests__/mocks/react-markdown.tsx",
+    "^next-themes$": "<rootDir>/src/__tests__/mocks/next-themes.ts",
   },
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   collectCoverageFrom: [

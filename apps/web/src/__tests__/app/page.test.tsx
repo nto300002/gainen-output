@@ -16,7 +16,9 @@ describe("HomePage", () => {
   it("displays the blog title", async () => {
     const jsx = await HomePage();
     render(jsx);
-    expect(screen.getByText("概念理解ノート")).toBeInTheDocument();
+    // h1 has "概念" + <span>理解</span> + "ノート", use heading role to check combined text
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading).toHaveTextContent("概念理解ノート");
   });
 
   it("displays post cards", async () => {

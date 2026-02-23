@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="ja" suppressHydrationWarning>
       <body className={`${notoSansJP.variable} ${jetbrainsMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Navbar />
           {children}
         </ThemeProvider>
       </body>

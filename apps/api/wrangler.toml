@@ -4,7 +4,7 @@ compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-FRONTEND_URL = "http://localhost:3000"
+FRONTEND_URL = "http://localhost:3001"
 ADMIN_EMAIL = ""
 
 # Secrets (set via `wrangler secret put`):

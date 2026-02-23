@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 export const useRouter = jest.fn(() => ({
   push: jest.fn(),

@@ -5,11 +5,11 @@ import type { PostWithRelations } from "@/types";
 const allPosts: PostWithRelations[] = [mockPinnedPost, mockPost, mockDraftPost];
 
 export const postsHandlers = [
-  http.get("http://localhost:3000/api/posts", () => {
+  http.get("http://localhost/api/posts", () => {
     return HttpResponse.json(allPosts);
   }),
 
-  http.get("http://localhost:3000/api/posts/:slug", ({ params }) => {
+  http.get("http://localhost/api/posts/:slug", ({ params }) => {
     const { slug } = params;
     const post = allPosts.find((p) => p.slug === slug);
     if (!post) {
@@ -18,7 +18,7 @@ export const postsHandlers = [
     return HttpResponse.json(post);
   }),
 
-  http.post("http://localhost:3000/api/posts", async ({ request }) => {
+  http.post("http://localhost/api/posts", async ({ request }) => {
     const body = (await request.json()) as Partial<PostWithRelations>;
     const newPost: PostWithRelations = {
       id: "post-new",
@@ -39,7 +39,7 @@ export const postsHandlers = [
     return HttpResponse.json(newPost, { status: 201 });
   }),
 
-  http.put("http://localhost:3000/api/posts/:id", async ({ params, request }) => {
+  http.put("http://localhost/api/posts/:id", async ({ params, request }) => {
     const { id } = params;
     const body = (await request.json()) as Partial<PostWithRelations>;
     const post = allPosts.find((p) => p.id === id);

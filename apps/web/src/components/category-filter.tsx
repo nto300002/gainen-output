@@ -24,11 +24,11 @@ export function CategoryFilter({ categories, onFilter }: Props) {
         onClick={() => handleClick(null)}
         className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
           active === null
-            ? "bg-violet-600 text-white"
-            : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+            ? "bg-violet-600 text-white shadow-sm"
+            : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-violet-300 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-zinc-700"
         }`}
       >
-        すべて
+        All
       </button>
 
       {categories.map((category) => (
@@ -39,8 +39,8 @@ export function CategoryFilter({ categories, onFilter }: Props) {
           onClick={() => handleClick(category.id)}
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             active === category.id
-              ? "bg-violet-600 text-white"
-              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+              ? "bg-violet-600 text-white shadow-sm"
+              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-violet-300 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-zinc-700"
           }`}
         >
           {category.name}

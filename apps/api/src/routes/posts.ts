@@ -25,8 +25,7 @@ const postSchema = z.object({
 app.get("/", async (c) => {
   const db = createDb(c.env.DB);
   const tagSlug = c.req.query("tag");
-  const categorySlug = c.req.query("category");
-  const statusFilter = c.req.query("status"); // admin only: draft | published | all
+  const statusFilter = c.req.query("status"); // admin only: draft | published
 
   const rows = await db
     .select({
@@ -50,16 +49,41 @@ app.get("/", async (c) => {
     .orderBy(desc(posts.is_pinned), desc(posts.sort_order), desc(posts.created_at))
     .all();
 
-  // タグ絞り込み（簡易: N+1 を避けるため後処理）
-  if (tagSlug || categorySlug) {
-    const filtered = rows.filter((p) => {
-      if (categorySlug && !rows.some((r) => r.id === p.id)) return false;
-      return true;
-    });
-    return c.json(filtered);
+  if (rows.length === 0) return c.json([]);
+
+  // タグを一括取得（N+1 回避）
+  const postIds = rows.map((r) => r.id);
+  const allPostTags = await db
+    .select({
+      post_id: post_tags.post_id,
+      id: tags.id,
+      name: tags.name,
+      slug: tags.slug,
+      is_preset: tags.is_preset,
+      created_at: tags.created_at,
+    })
+    .from(post_tags)
+    .innerJoin(tags, eq(post_tags.tag_id, tags.id))
+    .where(inArray(post_tags.post_id, postIds))
+    .all();
+
+  // post_id ごとにグルーピング
+  const tagsByPostId = allPostTags.reduce<Record<string, typeof allPostTags>>(
+    (acc, t) => {
+      (acc[t.post_id] ??= []).push(t);
+      return acc;
+    },
+    {},
+  );
+
+  const result = rows.map((r) => ({ ...r, tags: tagsByPostId[r.id] ?? [] }));
+
+  // タグスラッグで絞り込み
+  if (tagSlug) {
+    return c.json(result.filter((r) => r.tags.some((t) => t.slug === tagSlug)));
   }
 
-  return c.json(rows);
+  return c.json(result);
 });
 
 // ─── GET /api/posts/:slug ─────────────────────────────────────────────────────

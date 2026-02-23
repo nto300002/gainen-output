@@ -1,34 +1,29 @@
 import { getPosts, getCategories } from "@/lib/api";
-import { PostCard } from "@/components/post-card";
-import { DotGrid } from "@/components/ui/dot-grid";
+import { PostsSection } from "@/components/posts-section";
 
 export default async function HomePage() {
   const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
 
-  const sorted = [...posts].sort((a, b) => b.is_pinned - a.is_pinned);
-  const published = sorted.filter((p) => p.status === "published");
+  const sorted = [...posts]
+    .sort((a, b) => b.is_pinned - a.is_pinned)
+    .filter((p) => p.status === "published");
 
   return (
-    <main className="relative min-h-screen bg-zinc-50 dark:bg-[#0D1117]">
-      <DotGrid />
-
-      <div className="relative mx-auto max-w-4xl px-4 py-16">
-        <header className="mb-12 text-center">
+    <main className="min-h-screen">
+      <div className="mx-auto max-w-5xl px-4 py-12">
+        {/* Hero */}
+        <header className="mb-10 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            概念理解ノート
+            概念
+            <span className="text-violet-600 dark:text-violet-400">理解</span>
+            ノート
           </h1>
-          <p className="mt-3 text-zinc-500 dark:text-zinc-400">
-            学びの記録と概念整理
+          <p className="mt-3 font-mono text-sm text-zinc-500 dark:text-zinc-400">
+            Visualize concepts, deepen understanding
           </p>
         </header>
 
-        <section>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {published.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        </section>
+        <PostsSection posts={sorted} categories={categories} />
       </div>
     </main>
   );

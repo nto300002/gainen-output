@@ -34,7 +34,7 @@ app.get("/google", async (c) => {
 
   const params = new URLSearchParams({
     client_id: c.env.GOOGLE_CLIENT_ID,
-    redirect_uri: getCallbackUrl(c.req.url),
+    redirect_uri: getCallbackUrl(c.env.FRONTEND_URL),
     response_type: "code",
     scope: "openid email profile",
     state,
@@ -80,7 +80,7 @@ app.get("/callback", async (c) => {
       code,
       code_verifier: codeVerifier,
       grant_type: "authorization_code",
-      redirect_uri: getCallbackUrl(c.req.url),
+      redirect_uri: getCallbackUrl(c.env.FRONTEND_URL),
     }),
   });
 
@@ -147,9 +147,8 @@ app.get("/me", authMiddleware(), (c) => {
 
 // ─── Helper functions ─────────────────────────────────────────────────────────
 
-function getCallbackUrl(requestUrl: string): string {
-  const url = new URL(requestUrl);
-  return `${url.protocol}//${url.host}/api/auth/callback`;
+function getCallbackUrl(frontendUrl: string): string {
+  return `${frontendUrl}/api/auth/callback`;
 }
 
 function getCookieValue(request: Request, name: string): string | undefined {

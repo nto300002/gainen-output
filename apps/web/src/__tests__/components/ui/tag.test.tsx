@@ -8,8 +8,8 @@ describe("TagBadge", () => {
     expect(getByText("React")).toBeInTheDocument();
   });
 
-  it("applies violet color classes", () => {
+  it("applies near-black text class in light mode", () => {
     const { container } = render(<TagBadge tag={mockTag} />);
-    expect(container.firstChild).toHaveClass("text-violet-600");
+    expect(container.firstChild).toHaveClass("text-zinc-900");
   });
 });

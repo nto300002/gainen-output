@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
-:root {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-card: #f9f9f9;
-}
+/*
+  Tailwind v4 でクラスベースのダークモードを有効化する。
+  next-themes が <html class="dark"> を付与するので、
+  祖先に .dark があれば dark: ユーティリティが適用される。
+*/
+@variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --font-sans: var(--font-noto-sans-jp);
-  --font-mono: var(--font-jetbrains-mono);
-  --color-background: var(--color-background);
-  --color-foreground: var(--color-foreground);
-  --color-card: var(--color-card);
+/* ── カラートークン ─────────────────────────────── */
+:root {
+  --color-background: #EEEEFF;   /* ラベンダー白 */
+  --color-foreground: #1a1a2e;
+  --color-card:       #ffffff;
+  --color-border:     #ddd8f8;
 }
 
 .dark {
   --color-background: #0D1117;
   --color-foreground: #e6edf3;
-  --color-card: #161B22;
+  --color-card:       #161B22;
+  --color-border:     #30363d;
 }
 
+/* ── Tailwind テーマ拡張 ─────────────────────────── */
+@theme inline {
+  --font-sans: var(--font-noto-sans-jp);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-card:       var(--color-card);
+}
+
+/* ── ベーススタイル ──────────────────────────────── */
 body {
-  background: var(--color-background);
+  background-color: var(--color-background);
   color: var(--color-foreground);
 }
