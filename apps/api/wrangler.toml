@@ -1,0 +1,26 @@
+name = "gainen-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_URL = "http://localhost:3000"
+ADMIN_EMAIL = ""
+
+# Secrets (set via `wrangler secret put`):
+# GOOGLE_CLIENT_ID
+# GOOGLE_CLIENT_SECRET
+# SESSION_SECRET
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gainen-db"
+database_id = "your-database-id-here"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "gainen-images"
+
+[dev]
+port = 8787
+local_protocol = "http"

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+.wrangler/
+*.js.map
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+.dev.vars
+
+# Cloudflare
+.wrangler/
+wrangler.toml.bak
+
+# Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
