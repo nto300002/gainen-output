@@ -14,8 +14,21 @@ export function PostViewer({ post, relatedPosts = [] }: Props) {
         {post.title}
       </h1>
 
-      <div className="prose prose-zinc dark:prose-invert max-w-none">
-        <ReactMarkdown>{post.body.replace(/\\n/g, "\n")}</ReactMarkdown>
+      {post.image_key && (
+        <div className="mb-8 overflow-hidden rounded-xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/api/images/${post.image_key}`}
+            alt="アイキャッチ画像"
+            className="w-full object-cover"
+          />
+        </div>
+      )}
+
+      <div className="rounded-xl bg-white p-8 dark:bg-[#161B22]">
+        <div className="prose prose-zinc dark:prose-invert max-w-none">
+          <ReactMarkdown>{post.body.replace(/\\n/g, "\n")}</ReactMarkdown>
+        </div>
       </div>
 
       {relatedPosts.length > 0 && (

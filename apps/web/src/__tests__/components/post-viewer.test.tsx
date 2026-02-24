@@ -22,4 +22,22 @@ describe("PostViewer", () => {
     render(<PostViewer post={mockPost} relatedPosts={[]} />);
     expect(screen.queryByText(/関連記事|Related/i)).not.toBeInTheDocument();
   });
+
+  // image display
+  it("displays hero image when image_key is set", () => {
+    render(<PostViewer post={mockPinnedPost} />);
+    const img = screen.getByRole("img", { name: "アイキャッチ画像" });
+    expect(img).toHaveAttribute("src", `/api/images/${mockPinnedPost.image_key}`);
+  });
+
+  it("does not display hero image when image_key is null", () => {
+    render(<PostViewer post={mockPost} />);
+    expect(screen.queryByRole("img", { name: "アイキャッチ画像" })).not.toBeInTheDocument();
+  });
+
+  // white background
+  it("content area has white background", () => {
+    const { container } = render(<PostViewer post={mockPost} />);
+    expect(container.querySelector("[class*='bg-white']")).toBeInTheDocument();
+  });
 });
