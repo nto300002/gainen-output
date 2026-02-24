@@ -5,7 +5,11 @@ import {
   getTags,
   createPost,
   updatePost,
+  deletePost,
   uploadImage,
+  deleteCategory,
+  deleteTag,
+  pollCanvaExport,
 } from "@/lib/api";
 import { mockPost, mockPinnedPost, mockDraftPost, mockCategory, mockTag, mockTag2 } from "@/__tests__/mocks/fixtures";
 
@@ -69,12 +73,43 @@ describe("API functions", () => {
     });
   });
 
+  describe("deletePost", () => {
+    it("returns { ok: true } on success", async () => {
+      const result = await deletePost("post-1");
+      expect(result).toMatchObject({ ok: true });
+    });
+  });
+
   describe("uploadImage", () => {
     it("returns key and url after upload", async () => {
       const file = new File(["image"], "test.png", { type: "image/png" });
       const result = await uploadImage(file);
       expect(result).toHaveProperty("key");
       expect(result).toHaveProperty("url");
+    });
+  });
+
+  describe("deleteCategory", () => {
+    it("resolves without error for existing id", async () => {
+      await deleteCategory("cat-1");
+    });
+  });
+
+  describe("deleteTag", () => {
+    it("resolves without error for existing id", async () => {
+      await deleteTag("tag-1");
+    });
+  });
+
+  describe("pollCanvaExport", () => {
+    it("returns pending:true when no export found", async () => {
+      const result = await pollCanvaExport("no-result");
+      expect(result).toEqual({ pending: true });
+    });
+
+    it("returns image_key when export is ready", async () => {
+      const result = await pollCanvaExport("has-result");
+      expect(result).toHaveProperty("image_key", "images/canva/export.png");
     });
   });
 });

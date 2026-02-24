@@ -17,25 +17,25 @@ describe("MarkdownEditor", () => {
 
   it("renders Bold button", () => {
     render(<MarkdownEditor value="" onChange={jest.fn()} />);
-    expect(screen.getByRole("button", { name: /bold|B/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bold" })).toBeInTheDocument();
   });
 
   it("renders H1 button", () => {
     render(<MarkdownEditor value="" onChange={jest.fn()} />);
-    expect(screen.getByRole("button", { name: /h1|heading/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "H1 Heading" })).toBeInTheDocument();
   });
 
   it("clicking Bold button inserts bold markdown", async () => {
     const onChange = jest.fn();
     render(<MarkdownEditor value="Hello" onChange={onChange} />);
-    await userEvent.click(screen.getByRole("button", { name: /bold|B/i }));
+    await userEvent.click(screen.getByRole("button", { name: "Bold" }));
     expect(onChange).toHaveBeenCalledWith(expect.stringContaining("**"));
   });
 
   it("clicking H1 button inserts heading markdown", async () => {
     const onChange = jest.fn();
     render(<MarkdownEditor value="Hello" onChange={onChange} />);
-    await userEvent.click(screen.getByRole("button", { name: /h1|heading/i }));
+    await userEvent.click(screen.getByRole("button", { name: "H1 Heading" }));
     expect(onChange).toHaveBeenCalledWith(expect.stringContaining("# "));
   });
 });

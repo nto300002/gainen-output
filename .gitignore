@@ -24,5 +24,8 @@ wrangler.toml.bak
 .vscode/
 *.swp
 
+# Turbo cache
+.turbo/
+
 # Logs
 *.log

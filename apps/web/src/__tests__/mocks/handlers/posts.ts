@@ -49,4 +49,13 @@ export const postsHandlers = [
     const updated = { ...post, ...body, updated_at: new Date().toISOString() };
     return HttpResponse.json(updated);
   }),
+
+  http.delete("http://localhost/api/posts/:id", ({ params }) => {
+    const { id } = params;
+    const index = allPosts.findIndex((p) => p.id === id);
+    if (index === -1) {
+      return HttpResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return HttpResponse.json({ ok: true });
+  }),
 ];

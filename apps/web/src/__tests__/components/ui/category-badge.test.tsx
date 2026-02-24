@@ -8,9 +8,10 @@ describe("CategoryBadge", () => {
     expect(getByText("JavaScript")).toBeInTheDocument();
   });
 
-  it("applies dynamic color via style prop", () => {
+  it("uses default indigo border and text color via Tailwind classes", () => {
     const { container } = render(<CategoryBadge category={mockCategory} />);
     const el = container.firstChild as HTMLElement;
-    expect(el.style.borderColor).toBeTruthy();
+    expect(el.style.borderColor).toBeFalsy();
+    expect(el.style.color).toBeFalsy();
   });
 });

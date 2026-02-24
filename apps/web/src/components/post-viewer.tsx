@@ -15,7 +15,7 @@ export function PostViewer({ post, relatedPosts = [] }: Props) {
       </h1>
 
       <div className="prose prose-zinc dark:prose-invert max-w-none">
-        <ReactMarkdown>{post.body}</ReactMarkdown>
+        <ReactMarkdown>{post.body.replace(/\\n/g, "\n")}</ReactMarkdown>
       </div>
 
       {relatedPosts.length > 0 && (

@@ -91,6 +91,19 @@ export const post_relations = sqliteTable(
   (t) => [primaryKey({ columns: [t.source_id, t.target_id] })],
 );
 
+// ─── canva_export_tokens ──────────────────────────────────────────────────────
+
+export const canva_export_tokens = sqliteTable("canva_export_tokens", {
+  session_token: text("session_token").primaryKey(),
+  image_key: text("image_key"),
+  created_at: text("created_at")
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  expires_at: text("expires_at").notNull(),
+});
+
+export type CanvaExportToken = typeof canva_export_tokens.$inferSelect;
+
 // ─── sessions ─────────────────────────────────────────────────────────────────
 
 export const sessions = sqliteTable("sessions", {

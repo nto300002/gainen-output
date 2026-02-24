@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/api";
+import { DeletePostButton } from "@/components/delete-post-button";
 
 export default async function AdminPage() {
   const posts = await getPosts();
@@ -40,12 +41,15 @@ export default async function AdminPage() {
                 <p className="font-medium text-zinc-900 dark:text-zinc-100">{post.title}</p>
                 <p className="text-xs text-zinc-500">{post.status}</p>
               </div>
-              <Link
-                href={`/admin/edit/${post.id}`}
-                className="text-sm text-violet-600 hover:underline"
-              >
-                編集
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  href={`/admin/edit/${post.slug}`}
+                  className="text-sm text-violet-600 hover:underline"
+                >
+                  編集
+                </Link>
+                <DeletePostButton postId={post.id} />
+              </div>
             </li>
           ))}
         </ul>

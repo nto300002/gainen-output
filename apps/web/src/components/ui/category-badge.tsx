@@ -5,12 +5,8 @@ type Props = {
 };
 
 export function CategoryBadge({ category }: Props) {
-  const color = category.color ?? "#6366f1";
   return (
-    <span
-      className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium"
-      style={{ borderColor: color, color }}
-    >
+    <span className="inline-flex items-center rounded-full border border-indigo-400 px-2 py-0.5 text-xs font-medium text-indigo-500 dark:border-indigo-500 dark:text-indigo-400">
       {category.name}
     </span>
   );

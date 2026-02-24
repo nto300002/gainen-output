@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import AdminPage from "@/app/admin/page";
+import AdminPage from "@/app/admin/(protected)/page";
 import { mockPost, mockDraftPost, mockPinnedPost } from "@/__tests__/mocks/fixtures";
 
 jest.mock("@/lib/api", () => ({
@@ -8,6 +8,7 @@ jest.mock("@/lib/api", () => ({
     require("@/__tests__/mocks/fixtures").mockPost,
     require("@/__tests__/mocks/fixtures").mockDraftPost,
   ]),
+  deletePost: jest.fn().mockResolvedValue({ ok: true }),
 }));
 
 describe("AdminPage", () => {
@@ -34,5 +35,12 @@ describe("AdminPage", () => {
     render(jsx);
     const link = screen.getByRole("link", { name: /新規投稿|new post/i });
     expect(link).toHaveAttribute("href", "/admin/new");
+  });
+
+  it("shows a delete button for each post", async () => {
+    const jsx = await AdminPage();
+    render(jsx);
+    const deleteButtons = screen.getAllByRole("button", { name: /削除/i });
+    expect(deleteButtons).toHaveLength(3);
   });
 });

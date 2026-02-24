@@ -16,22 +16,6 @@ export function Navbar() {
           <span>概念理解ノート</span>
         </Link>
 
-        {/* Nav links */}
-        <nav className="flex items-center gap-1">
-          <Link
-            href="/"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-violet-50 hover:text-violet-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-violet-400"
-          >
-            ホーム
-          </Link>
-          <Link
-            href="/admin"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-violet-50 hover:text-violet-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-violet-400"
-          >
-            管理
-          </Link>
-        </nav>
-
         {/* Right side */}
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />

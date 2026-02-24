@@ -17,6 +17,7 @@ const userConfig: Config = {
     "^next/navigation$": "<rootDir>/src/__tests__/mocks/next-navigation.ts",
     "^react-markdown$": "<rootDir>/src/__tests__/mocks/react-markdown.tsx",
     "^next-themes$": "<rootDir>/src/__tests__/mocks/next-themes.ts",
+    "^next/headers$": "<rootDir>/src/__tests__/mocks/next-headers.ts",
   },
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   collectCoverageFrom: [
@@ -48,6 +49,12 @@ async function getJestConfig(): Promise<Config> {
     // CSS modules (Next.js default)
     "^.+\\.module\\.(css|sass|scss)$",
   ];
+  // next/link: createJestConfig re-adds its own version after merging user config,
+  // so we override it here to use a simple <a> stub that works in jsdom tests.
+  config.moduleNameMapper = {
+    ...config.moduleNameMapper,
+    "^next/link$": "<rootDir>/src/__tests__/mocks/next-link.tsx",
+  };
   return config;
 }
 

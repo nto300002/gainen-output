@@ -41,10 +41,11 @@ export function PostCard({ post }: Props) {
 
         {post.image_key ? (
           <Image
-            src={`/${post.image_key}`}
+            src={`/api/images/${post.image_key}`}
             alt={post.title}
             fill
             className="object-cover"
+            unoptimized
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center gap-4">

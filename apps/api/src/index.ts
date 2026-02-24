@@ -8,6 +8,7 @@ import { tagsRouter } from "./routes/tags";
 import { relationsRouter } from "./routes/relations";
 import { uploadRouter } from "./routes/upload";
 import { authRouter } from "./routes/auth";
+import { canvaExportRouter } from "./routes/canva-export";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -23,6 +24,7 @@ app.route("/api/tags", tagsRouter);
 app.route("/api/posts", relationsRouter); // handles /:id/relations
 app.route("/api/upload", uploadRouter);
 app.route("/api/auth", authRouter);
+app.route("/api/canva-export", canvaExportRouter);
 
 // R2 image proxy
 app.get("/api/images/*", async (c) => {
