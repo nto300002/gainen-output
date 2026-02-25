@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPosts, getCategories } from "@/lib/api";
 import { PostsSection } from "@/components/posts-section";
 
