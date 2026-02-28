@@ -29,3 +29,4 @@ wrangler.toml.bak
 
 # Logs
 *.log
+.vercel
