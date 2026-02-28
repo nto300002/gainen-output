@@ -1,17 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { MarkdownContent } from "@/components/markdown-content";
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  onImageUpload?: (file: File) => Promise<string>;
 };
 
-export function MarkdownEditor({ value, onChange, placeholder }: Props) {
+export function MarkdownEditor({ value, onChange, placeholder, onImageUpload }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"edit" | "preview">("edit");
+  const [imageUploading, setImageUploading] = useState(false);
 
   function insert(before: string, after = "") {
     const ta = ref.current;
@@ -27,6 +30,19 @@ export function MarkdownEditor({ value, onChange, placeholder }: Props) {
       ta.focus();
       ta.setSelectionRange(start + before.length, end + before.length);
     });
+  }
+
+  async function handleImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !onImageUpload) return;
+    setImageUploading(true);
+    try {
+      const url = await onImageUpload(file);
+      insert(`![image](${url})`);
+    } finally {
+      setImageUploading(false);
+      e.target.value = "";
+    }
   }
 
   return (
@@ -117,6 +133,30 @@ export function MarkdownEditor({ value, onChange, placeholder }: Props) {
             >
               Link
             </button>
+            {onImageUpload && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Image"
+                  disabled={imageUploading}
+                  onClick={() => imageInputRef.current?.click()}
+                  className="rounded px-2 py-0.5 text-xs text-zinc-600 hover:bg-zinc-200 disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </button>
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageFile}
+                />
+              </>
+            )}
           </div>
         )}
       </div>
@@ -134,9 +174,9 @@ export function MarkdownEditor({ value, onChange, placeholder }: Props) {
       ) : (
         <div className="min-h-64 bg-white p-4 dark:bg-zinc-900">
           {value.trim() ? (
-            <div className="prose prose-zinc max-w-none dark:prose-invert">
-              <ReactMarkdown>{value.replace(/\\n/g, "\n")}</ReactMarkdown>
-            </div>
+            <MarkdownContent className="prose prose-zinc max-w-none dark:prose-invert">
+              {value}
+            </MarkdownContent>
           ) : (
             <p className="text-sm text-zinc-400 dark:text-zinc-600">
               本文を入力するとプレビューが表示されます
