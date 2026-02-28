@@ -6,8 +6,14 @@ import App from "../App";
 
 jest.mock("../canva-sdk", () => ({
   canvaSDK: {
-    exportContent: jest.fn(),
+    requestExport: jest.fn(),
   },
+}));
+
+// ─── Mock config (API URL is baked in at build time via Vite, not URL params) ─
+
+jest.mock("../config", () => ({
+  API_URL: "http://localhost:8787",
 }));
 
 // ─── Mock fetch ───────────────────────────────────────────────────────────────
@@ -17,30 +23,32 @@ global.fetch = mockFetch;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function setUrlParams(params: Record<string, string>) {
+function setSessionParam(session: string) {
   Object.defineProperty(window, "location", {
     writable: true,
     value: {
       ...window.location,
-      search: "?" + new URLSearchParams(params).toString(),
+      search: `?session=${session}`,
     },
   });
 }
 
 function makeExportResult(blobUrl = "blob:http://localhost/abc") {
   return {
+    status: "completed" as const,
     title: "My Design",
     exportBlobs: [{ url: blobUrl }],
   };
 }
 
 describe("App", () => {
-  let canvaSDK: { exportContent: jest.Mock };
+  let canvaSDK: { requestExport: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    canvaSDK = require("../canva-sdk").canvaSDK;
-    setUrlParams({ session: "test-session-token", api: "http://localhost:8787" });
+    canvaSDK = require("../canva-sdk").canvaSDK as { requestExport: jest.Mock };
+    // session_token はURLパラメータ経由（暫定）。api は config.API_URL から取得
+    setSessionParam("test-session-token");
 
     // Default: fetch for blob returns a blob, fetch for API returns ok
     mockFetch.mockImplementation((url: string) => {
@@ -59,20 +67,20 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: /エクスポート/i })).toBeInTheDocument();
   });
 
-  it("calls canvaSDK.exportContent when button is clicked", async () => {
-    canvaSDK.exportContent.mockResolvedValue(makeExportResult());
+  it("calls canvaSDK.requestExport when button is clicked", async () => {
+    canvaSDK.requestExport.mockResolvedValue(makeExportResult());
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
 
-    expect(canvaSDK.exportContent).toHaveBeenCalledWith(
+    expect(canvaSDK.requestExport).toHaveBeenCalledWith(
       expect.objectContaining({ acceptedFileTypes: ["PNG"] })
     );
   });
 
   it("shows loading state while exporting", async () => {
     let resolveExport!: (v: unknown) => void;
-    canvaSDK.exportContent.mockReturnValue(new Promise((r) => { resolveExport = r; }));
+    canvaSDK.requestExport.mockReturnValue(new Promise((r) => { resolveExport = r; }));
 
     render(<App />);
     await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
@@ -83,12 +91,13 @@ describe("App", () => {
     await waitFor(() => expect(screen.getByRole("button")).not.toBeDisabled());
   });
 
-  it("POSTs to the API with session_token and file", async () => {
-    canvaSDK.exportContent.mockResolvedValue(makeExportResult("blob:http://localhost/abc"));
+  it("POSTs to API_URL (from config, not URL params) with session_token and file", async () => {
+    canvaSDK.requestExport.mockResolvedValue(makeExportResult("blob:http://localhost/abc"));
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
 
+    // The endpoint URL must come from config.API_URL, not from ?api= URL param
     await waitFor(() =>
       expect(mockFetch).toHaveBeenCalledWith(
         "http://localhost:8787/api/canva-export",
@@ -105,7 +114,7 @@ describe("App", () => {
   });
 
   it("shows success message after export completes", async () => {
-    canvaSDK.exportContent.mockResolvedValue(makeExportResult());
+    canvaSDK.requestExport.mockResolvedValue(makeExportResult());
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
@@ -116,7 +125,7 @@ describe("App", () => {
   });
 
   it("shows error message when canvaSDK throws", async () => {
-    canvaSDK.exportContent.mockRejectedValue(new Error("SDK error"));
+    canvaSDK.requestExport.mockRejectedValue(new Error("SDK error"));
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
@@ -126,8 +135,18 @@ describe("App", () => {
     );
   });
 
+  it("does not POST to API when user aborts export", async () => {
+    canvaSDK.requestExport.mockResolvedValue({ status: "aborted" });
+    render(<App />);
+
+    await userEvent.click(screen.getByRole("button", { name: /エクスポート/i }));
+
+    await waitFor(() => expect(screen.getByRole("button")).not.toBeDisabled());
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
   it("shows error message when API POST fails", async () => {
-    canvaSDK.exportContent.mockResolvedValue(makeExportResult());
+    canvaSDK.requestExport.mockResolvedValue(makeExportResult());
     mockFetch.mockImplementation((url: string) => {
       if (typeof url === "string" && url.startsWith("blob:")) {
         return Promise.resolve({

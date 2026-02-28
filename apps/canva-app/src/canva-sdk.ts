@@ -1,12 +1,11 @@
-import { exportContent } from "@canva/design";
+import { requestExport } from "@canva/design";
 
-export type ExportResult = {
-  title: string;
-  exportBlobs: { url: string }[];
-};
+export type ExportResult =
+  | { status: "completed"; title?: string; exportBlobs: { url: string }[] }
+  | { status: "aborted" };
 
 export const canvaSDK = {
-  exportContent: (options: {
+  requestExport: (options: {
     acceptedFileTypes: string[];
-  }): Promise<ExportResult> => exportContent(options) as Promise<ExportResult>,
+  }): Promise<ExportResult> => requestExport(options) as Promise<ExportResult>,
 };
