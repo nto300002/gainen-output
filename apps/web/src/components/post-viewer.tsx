@@ -1,6 +1,6 @@
-import ReactMarkdown from "react-markdown";
 import type { PostWithRelations } from "@/types";
 import { PostCard } from "@/components/post-card";
+import { MarkdownContent } from "@/components/markdown-content";
 
 type Props = {
   post: PostWithRelations;
@@ -26,9 +26,9 @@ export function PostViewer({ post, relatedPosts = [] }: Props) {
       )}
 
       <div className="rounded-xl bg-white p-8 dark:bg-[#161B22]">
-        <div className="prose prose-zinc dark:prose-invert max-w-none">
-          <ReactMarkdown>{post.body.replace(/\\n/g, "\n")}</ReactMarkdown>
-        </div>
+        <MarkdownContent className="prose prose-zinc dark:prose-invert max-w-none">
+          {post.body}
+        </MarkdownContent>
       </div>
 
       {relatedPosts.length > 0 && (
