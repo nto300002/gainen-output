@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getPost, getCategories, getTags, updatePost, uploadImage, deleteCategory, deleteTag } from "@/lib/api";
-import { useCanvaExport } from "@/hooks/useCanvaExport";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import type { Category, Tag } from "@/types";
 
@@ -27,20 +26,7 @@ export default function EditPostPage({ params }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
-  // SSR-safe: window.location.origin is set in useEffect (client-only)
-  const [apiOrigin, setApiOrigin] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const { sessionToken } = useCanvaExport({
-    onExport: (imageKey) => {
-      setImagePreview(`/api/images/${imageKey}`);
-      setImageKey(imageKey);
-    },
-  });
-
-  useEffect(() => {
-    setApiOrigin(window.location.origin);
-  }, []);
 
   useEffect(() => {
     params.then(({ id: slug }) => {
@@ -260,7 +246,7 @@ export default function EditPostPage({ params }: Props) {
           )}
           <div className="flex gap-2">
             <a
-              href={`https://www.canva.com/apps/${process.env.NEXT_PUBLIC_CANVA_APP_ID ?? ""}?session=${sessionToken}&api=${apiOrigin}`}
+              href="https://www.canva.com"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
@@ -310,7 +296,14 @@ export default function EditPostPage({ params }: Props) {
 
         <div>
           <p className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">本文</p>
-          <MarkdownEditor value={body} onChange={setBody} />
+          <MarkdownEditor
+            value={body}
+            onChange={setBody}
+            onImageUpload={async (file) => {
+              const result = await uploadImage(file);
+              return `/api/images/${result.key}`;
+            }}
+          />
         </div>
 
         <div>

@@ -1,11 +1,7 @@
-import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EditPostPage from "@/app/admin/(protected)/edit/[id]/page";
 import { mockPost, mockPinnedPost } from "@/__tests__/mocks/fixtures";
-
-jest.mock("@/hooks/useCanvaExport", () => ({
-  useCanvaExport: jest.fn(() => ({ sessionToken: "test-session-edit" })),
-}));
 
 jest.mock("@/lib/api", () => ({
   getPost: jest.fn().mockResolvedValue(require("@/__tests__/mocks/fixtures").mockPost),
@@ -252,36 +248,9 @@ describe("EditPostPage", () => {
     });
   });
 
-  describe("Canva export integration", () => {
-    let useCanvaExport: jest.Mock;
-
-    beforeEach(() => {
-      useCanvaExport = require("@/hooks/useCanvaExport").useCanvaExport;
-      useCanvaExport.mockClear();
-      useCanvaExport.mockImplementation(() => ({ sessionToken: "test-session-edit" }));
-    });
-
-    it("概念作成 link includes session token", async () => {
-      render(<EditPostPage params={params} />);
-      const link = await screen.findByRole("link", { name: /概念作成/i });
-      expect(link.getAttribute("href")).toContain("test-session-edit");
-    });
-
-    it("auto-sets image preview when Canva export fires", async () => {
-      let capturedOnExport: ((key: string) => void) | null = null;
-      useCanvaExport.mockImplementation(({ onExport }: { onExport: (key: string) => void }) => {
-        capturedOnExport = onExport;
-        return { sessionToken: "test-session-edit" };
-      });
-
-      render(<EditPostPage params={params} />);
-      await screen.findByRole("link", { name: /概念作成/i });
-
-      act(() => { capturedOnExport?.("images/canva/edit-export.png"); });
-
-      await waitFor(() =>
-        expect(screen.getByRole("img", { name: /プレビュー/i })).toBeInTheDocument()
-      );
-    });
+  it("概念作成 link points to canva.com top", async () => {
+    render(<EditPostPage params={params} />);
+    const link = await screen.findByRole("link", { name: /概念作成/i });
+    expect(link.getAttribute("href")).toBe("https://www.canva.com");
   });
 });
